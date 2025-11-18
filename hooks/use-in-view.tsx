@@ -3,22 +3,22 @@
 import { useEffect, useRef, useState } from "react"
 
 export function useInView(options = { threshold: 0.1 }) {
-  const ref = useRef(null)
+  const ref = useRef<HTMLElement | null>(null)
   const [isInView, setIsInView] = useState(false)
 
   useEffect(() => {
+    if (!ref.current) return
+
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsInView(true)
-        observer.unobserve(entry.target)
-      }
+      // Toggle based on visibility so animations can re-run
+      setIsInView(entry.isIntersecting)
     }, options)
 
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
+    observer.observe(ref.current)
 
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+    }
   }, [options])
 
   return { ref, isInView }

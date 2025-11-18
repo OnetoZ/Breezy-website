@@ -50,7 +50,15 @@ export default function Hero() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
-              <button className="px-8 py-4 bg-primary text-primary-foreground rounded-full font-semibold text-lg hover:bg-primary/90 hover:shadow-xl transition-all duration-300 scale-on-hover">
+              <button
+                className="px-8 py-4 bg-primary text-primary-foreground rounded-full font-semibold text-lg hover:bg-primary/90 hover:shadow-xl transition-all duration-300 scale-on-hover cursor-pointer"
+                onClick={() => {
+                  const target = document.querySelector("#products")
+                  if (target) {
+                    target.scrollIntoView({ behavior: "smooth" })
+                  }
+                }}
+              >
                 Start With Breezy
               </button>
             </div>

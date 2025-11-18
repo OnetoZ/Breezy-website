@@ -123,3 +123,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Global logo marquee animation for retailer strip */
+@keyframes logo-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+

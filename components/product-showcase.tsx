@@ -60,10 +60,13 @@ export default function ProductShowcase() {
                   { name: "XL", desc: "Thick Cotton" },
                   { name: "XXL", desc: "Thick Cotton" },
                   { name: "Thin", desc: "Free Size" },
-                ].map((size) => (
+                ].map((size, i) => (
                   <button
                     key={size.name}
-                    className="px-6 py-2 bg-primary/10 hover:bg-primary hover:text-primary-foreground border border-primary/30 rounded-full font-medium transition-all duration-300 text-sm"
+                    className={`px-6 py-2 bg-primary/10 hover:bg-primary hover:text-primary-foreground border border-primary/30 rounded-full font-medium transition-all duration-300 text-sm ${
+                      isInView ? "fade-in-up" : "opacity-0"
+                    }`}
+                    style={{ animation: isInView ? `fadeInUp 0.6s ease-out ${0.4 + i * 0.1}s both` : "" }}
                   >
                     <div className="font-semibold">{size.name}</div>
                     <div className="text-xs opacity-80">{size.desc}</div>
@@ -71,10 +74,6 @@ export default function ProductShowcase() {
                 ))}
               </div>
             </div>
-
-            <button className="px-8 py-4 bg-accent text-accent-foreground rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 w-full md:w-auto">
-              Shop Breezy Pads
-            </button>
           </div>
 
           {/* Product Visual - 4 Layers */}

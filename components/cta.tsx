@@ -1,9 +1,48 @@
 "use client"
 
+import { useState } from "react"
 import { useInView } from "@/hooks/use-in-view"
 
 export default function CTA() {
   const { ref, isInView } = useInView()
+
+  const [retailerName, setRetailerName] = useState("")
+  const [storeName, setStoreName] = useState("")
+  const [city, setCity] = useState("")
+  const [phone, setPhone] = useState("")
+  const [message, setMessage] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+
+  const handleRetailerSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setSubmitStatus("idle")
+
+    if (!retailerName.trim() || !phone.trim()) {
+      setSubmitStatus("error")
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      // Simulate a successful submission on the client only, without any backend call.
+      // This keeps the UI behavior (loading state + success message) but does not
+      // send data to a server.
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      setSubmitStatus("success")
+      setRetailerName("")
+      setStoreName("")
+      setCity("")
+      setPhone("")
+      setMessage("")
+    } catch (error) {
+      console.error("Retailer enquiry failed", error)
+      setSubmitStatus("error")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <section ref={ref} className="py-20 md:py-32 relative overflow-hidden">
@@ -14,16 +53,211 @@ export default function CTA() {
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-primary/30 rounded-full blur-3xl"></div>
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-accent/30 rounded-full blur-3xl"></div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <div className={isInView ? "fade-in-up" : "opacity-0"}>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-foreground mb-6">
-            Your Comfort Matters
-          </h2>
-          <p className="text-lg md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of women who have chosen natural comfort and confidence with Breezy.
-          </p>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div
+          className={`rounded-3xl bg-background/80 backdrop-blur-xl border border-border/60 shadow-xl p-8 md:p-12 ${
+            isInView ? "fade-in-up" : "opacity-0"
+          }`}
+        >
+          <div className="grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,1.3fr)] items-center">
+            {/* Text + offers */}
+            <div>
+              <p className="text-xs md:text-sm font-medium tracking-[0.2em] text-primary/80 uppercase mb-3">
+                For retailers and partners
+              </p>
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-4">
+                Sell Breezy in your store.
+              </h2>
+              <p className="text-sm md:text-lg text-muted-foreground mb-6 md:mb-8 max-w-xl leading-relaxed">
+                Breezy is a herbal, skin-friendly and biodegradable sanitary pad brand. Add Breezy to your shelves and
+                offer your customers a safe and comfortable choice.
+              </p>
+
+              <div className="grid gap-4 md:grid-cols-2 mb-6 md:mb-8 text-left">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">Simple retailer offers</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Get easy starter offers and margin plans suitable for medical shops, supermarkets and small stores.
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">Quick support on WhatsApp</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Ask questions, place orders and request display stands directly on WhatsApp.
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">Products customers understand</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Clear packaging and simple communication that make it easy for shoppers to choose Breezy.
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">Different sizes and packs</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Choose from multiple flow options and pack sizes based on what sells best in your area.
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs md:text-sm text-muted-foreground">
+                To know more or to start stocking Breezy, scan the QR code on the right and send us a message on
+                WhatsApp.
+              </p>
+            </div>
+
+            {/* QR code block */}
+            <div className="flex justify-center md:justify-end">
+              <div className="w-full max-w-xs rounded-2xl bg-background/90 border border-border/70 shadow-lg p-5 flex flex-col items-center text-center gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">Scan to connect</p>
+                  <p className="text-xs text-muted-foreground">Breezy Business WhatsApp (demo QR)</p>
+                </div>
+
+                {/* Dummy WhatsApp Business QR image */}
+                <div className="w-40 h-40 rounded-xl overflow-hidden bg-muted flex items-center justify-center">
+                  <img
+                    src="https://dummyimage.com/320x320/000000/ffffff.png&text=WhatsApp+QR"
+                    alt="Dummy Breezy Business WhatsApp QR"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="space-y-2 w-full text-left">
+                  <p className="text-xs text-muted-foreground">
+                    This is a dummy QR-code placeholder. Replace it with your actual WhatsApp business QR when ready. Or
+                    share your details below and we will get back to you.
+                  </p>
+                  <form onSubmit={handleRetailerSubmit} className="space-y-2 text-left w-full">
+                    <input
+                      type="text"
+                      value={retailerName}
+                      onChange={(e) => setRetailerName(e.target.value)}
+                      placeholder="Your name *"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs md:text-sm"
+                    />
+                    <input
+                      type="text"
+                      value={storeName}
+                      onChange={(e) => setStoreName(e.target.value)}
+                      placeholder="Store / business name"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs md:text-sm"
+                    />
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder="City / area"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs md:text-sm"
+                    />
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="WhatsApp number *"
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs md:text-sm"
+                    />
+                    <textarea
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Tell us what you need (optional)"
+                      rows={2}
+                      className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs md:text-sm resize-none"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full inline-flex items-center justify-center rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? "Sending..." : "Send retailer enquiry"}
+                    </button>
+                    {submitStatus === "success" && (
+                      <p className="text-[0.7rem] text-emerald-600 mt-1">Thank you! We have received your details.</p>
+                    )}
+                    {submitStatus === "error" && (
+                      <p className="text-[0.7rem] text-red-600 mt-1">
+                        Please fill in your name and WhatsApp number, and try again.
+                      </p>
+                    )}
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Running retailer logos strip */}
+          <div className="mt-10 border-t border-border/60 pt-6">
+            <p className="text-xs md:text-sm font-medium text-muted-foreground mb-3 text-center uppercase tracking-[0.2em]">
+              Available on
+            </p>
+            <div className="relative overflow-hidden">
+              <div
+                className="flex gap-10 whitespace-nowrap"
+                style={{ animation: "logo-marquee 28s linear infinite" }}
+              >
+                {[1, 2].map((loop) => (
+                  <div key={loop} className="flex gap-10 items-center">
+                    <a
+                      href="https://www.amazon.in"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors"
+                    >
+                      <span className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center text-[0.65rem] font-bold">
+                        A
+                      </span>
+                      <span className="text-xs md:text-sm font-semibold text-foreground">Amazon</span>
+                    </a>
+                    <a
+                      href="https://www.flipkart.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors"
+                    >
+                      <span className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center text-[0.65rem] font-bold">
+                        F
+                      </span>
+                      <span className="text-xs md:text-sm font-semibold text-foreground">Flipkart</span>
+                    </a>
+                    <a
+                      href="https://www.nykaa.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors"
+                    >
+                      <span className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center text-[0.65rem] font-bold">
+                        N
+                      </span>
+                      <span className="text-xs md:text-sm font-semibold text-foreground">Nykaa</span>
+                    </a>
+                    <a
+                      href="https://www.bigbasket.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors"
+                    >
+                      <span className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center text-[0.65rem] font-bold">
+                        B
+                      </span>
+                      <span className="text-xs md:text-sm font-semibold text-foreground">BigBasket</span>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <style jsx global>{`
+        @keyframes logo-marquee {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
+      `}</style>
     </section>
   )
 }
