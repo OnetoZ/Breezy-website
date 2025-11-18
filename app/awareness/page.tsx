@@ -8,38 +8,78 @@ const awarenessSections = [
   {
     title: "What Periods Really Are",
     icon: "💡",
-    content: "Understanding the menstrual cycle and what happens in your body during different phases of your cycle.",
+    content: "Your period is your body gently shedding the lining of the uterus each month.",
+    details:
+      "Each cycle, hormones prepare the uterus for a possible pregnancy. When there is no pregnancy, the lining breaks down and flows out as your period. Regular cycles usually mean your hormones, uterus and ovaries are working together in a healthy way.",
   },
   {
     title: "Avoiding Rashes & Infections",
     icon: "🛡️",
-    content:
-      "Learn how to prevent rashes and infections with proper hygiene, material choices, and pad changing practices.",
+    content: "Keeping the area clean, dry and changing pads on time reduces most rashes.",
+    details:
+      "Change pads every 46 hours, or sooner if they feel damp. Wash with plain water instead of harsh soaps, and avoid heavily perfumed products on intimate skin. Loose, breathable underwear also helps the skin stay healthy.",
   },
   {
     title: "Responsible Pad Disposal",
     icon: "🌍",
-    content: "Understand the environmental impact and proper disposal methods for sanitary products.",
+    content: "Wrap used pads and put them in a bin — never in the toilet.",
+    details:
+      "After use, fold the pad, wrap it in paper or the wrapper, and place it in a covered bin. Flushing pads blocks pipes and harms local water systems. If your area has waste segregation, follow the local guidelines for sanitary waste.",
   },
   {
     title: "Nutrition for Healthy Cycles",
     icon: "🥗",
-    content: "Discover the best foods and nutrients to support your menstrual health and manage symptoms naturally.",
+    content: "Simple food choices can make periods feel lighter and less tiring.",
+    details:
+      "Iron-rich foods like greens, millets, dates, nuts and lentils help replace blood loss and fight tiredness. Drinking enough water reduces bloating and headaches. Regular meals, not skipping breakfast, keeps your energy and mood more stable.",
   },
   {
     title: "Yoga for Cramps",
     icon: "🧘",
-    content: "Gentle yoga poses and breathing techniques designed to relieve menstrual cramps and discomfort.",
+    content: "Gentle movement can relax muscles and ease cramps.",
+    details:
+      "Slow stretching, deep belly breathing and short walks increase blood flow and relax tight muscles. Avoid very intense workouts if you feel weak. Listening to your body and moving at your own pace is more important than pushing hard.",
   },
   {
     title: "Mood, Hormones & Confidence",
     icon: "💪",
-    content: "Explore the connection between hormones and mood, and build confidence throughout your cycle.",
+    content: "Feeling low, irritated or extra emotional around your period is common.",
+    details:
+      "Hormone shifts can affect sleep, appetite and mood. Gentle exercise, enough rest, and sharing how you feel with someone you trust can ease mood swings. Remember: your feelings are valid, and asking for support is a sign of strength, not weakness.",
   },
 ]
 
 export default function AwarenessPage() {
   const [selectedTopic, setSelectedTopic] = useState(0)
+  const [showMore, setShowMore] = useState(false)
+
+  const handleShare = () => {
+    const topic = awarenessSections[selectedTopic]
+    const url = typeof window !== "undefined" ? window.location.href : ""
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: topic.title,
+          text: topic.content,
+          url,
+        })
+        .catch(() => {
+          // user cancelled share; no action needed
+        })
+    } else if (navigator.clipboard && url) {
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          alert("Link copied. You can now share it with someone who may find this helpful.")
+        })
+        .catch(() => {
+          alert("Could not copy the link, but you can still share this page from your browser.")
+        })
+    } else {
+      alert("You can share this page using your browser's share or copy link options.")
+    }
+  }
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -79,19 +119,32 @@ export default function AwarenessPage() {
           </div>
 
           {/* Selected Topic Detail */}
-          <div className="bg-card rounded-2xl border border-border p-12">
+          <div className="bg-card rounded-2xl border border-border p-12 transition-all duration-300">
             <div className="text-6xl mb-4">{awarenessSections[selectedTopic].icon}</div>
             <h2 className="text-4xl font-serif font-bold text-foreground mb-6">
               {awarenessSections[selectedTopic].title}
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
               {awarenessSections[selectedTopic].content}
             </p>
-            <div className="flex gap-4">
-              <button className="px-6 py-3 bg-primary text-primary-foreground rounded-full font-semibold hover:bg-primary/90 transition-colors">
-                Read More
+            <div
+              className={`text-base text-muted-foreground leading-relaxed transition-all duration-300 ease-out overflow-hidden ${
+                showMore ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+              }`}
+            >
+              <p>{awarenessSections[selectedTopic].details}</p>
+            </div>
+            <div className="flex gap-4 mt-8">
+              <button
+                className="px-6 py-3 bg-primary text-primary-foreground rounded-full font-semibold hover:bg-primary/90 transition-colors"
+                onClick={() => setShowMore((prev) => !prev)}
+              >
+                {showMore ? "Show less" : "Read more"}
               </button>
-              <button className="px-6 py-3 bg-primary/10 border border-primary/30 text-primary rounded-full font-semibold hover:bg-primary/20 transition-colors">
+              <button
+                className="px-6 py-3 bg-primary/10 border border-primary/30 text-primary rounded-full font-semibold hover:bg-primary/20 transition-colors"
+                onClick={handleShare}
+              >
                 Share
               </button>
             </div>
