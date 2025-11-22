@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 
 type NavigationProps = {
   scrollY: number
@@ -21,26 +22,30 @@ export default function Navigation({ scrollY }: NavigationProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className=" flex items-center justify-between  h-20 w-full">
-          {/* Logo */}
+          {/* LogoStart. I. And the start with. Start with. Automatic. Sriman prohibition. Baraat vande negroukerissa. Logo Chelinda Agita logo Chelka. In the bundle with a button and one and a leather. They could start with this buttons and. Rajkumar Hirani content is the remarkable game ISS hafte Ki kahani. Let me start. Tomorrow. 20 to 30% animated. India's boy ruled. Chandigarh. Vodafone. Comes to explain. From a company. I just returned. See the job. Is called from me or something? Yeah. See this was. OK. From on my birthday. Four. */}
           <div className="flex items-center min-w0">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg group-hover:scale-110 transition-transform duration-300">
-                B
-              </div>
-              <span className="text-xl font-bold text-foreground hidden sm:inline font-serif">Breezy</span>
+              <Image
+                src="/breezy-logo.png"
+                alt="Breezy"
+                width={500}
+                height={200}
+                className="h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                priority
+              />
             </Link>
           </div>
 
           {/* Centered desktop navigation */}
           <div className="hidden md:flex items-center justify-center gap-8">
             <Link
-              href="#why-breezy"
+              href="/#why-breezy"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Why Breezy
             </Link>
             <Link
-              href="#products"
+              href="/#products"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Products
@@ -52,22 +57,15 @@ export default function Navigation({ scrollY }: NavigationProps) {
               Awareness
             </Link>
             <Link
-              href="#impact"
+              href="/#impact"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Impact
             </Link>
           </div>
 
-          {/* Right side: CTA (desktop) + menu button (mobile) */}
+          {/* Right side: menu button (mobile) */}
           <div className="flex items-center justify-end gap-4">
-            {/* CTA Button */}
-            <div className="hidden md:flex items-center">
-              <button className="px-6 py-2 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-all duration-300 hover:shadow-lg cursor-pointer">
-                Shop Now
-              </button>
-            </div>
-
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -90,13 +88,13 @@ export default function Navigation({ scrollY }: NavigationProps) {
         {isOpen && (
           <div className="md:hidden pb-4 space-y-2 animate-in fade-in duration-200">
             <Link
-              href="#why-breezy"
+              href="/#why-breezy"
               className="block px-4 py-2 text-sm font-medium text-foreground hover:bg-muted rounded-lg"
             >
               Why Breezy
             </Link>
             <Link
-              href="#products"
+              href="/#products"
               className="block px-4 py-2 text-sm font-medium text-foreground hover:bg-muted rounded-lg"
             >
               Products
@@ -108,14 +106,11 @@ export default function Navigation({ scrollY }: NavigationProps) {
               Awareness
             </Link>
             <Link
-              href="#impact"
+              href="/#impact"
               className="block px-4 py-2 text-sm font-medium text-foreground hover:bg-muted rounded-lg"
             >
               Impact
             </Link>
-            <button className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors">
-              Shop Now
-            </button>
           </div>
         )}
       </div>

@@ -9,7 +9,7 @@ export default function ProductShowcase() {
     <section
       id="products"
       ref={ref}
-      className="py-20 md:py-32 bg-gradient-to-br from-secondary/30 to-background relative overflow-hidden"
+      className="py-10 md:py-16 bg-gradient-to-br from-secondary/30 to-background relative overflow-hidden"
     >
       {/* Decorative circles */}
       <div className="absolute right-0 top-0 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
@@ -32,9 +32,9 @@ export default function ProductShowcase() {
             {/* Features List */}
             <div className="space-y-4">
               {[
-                "Ultra-soft organic cotton",
+                "Ultra-soft cotton",
                 "Herbal protection (Neem, Aloe, Tulsi, Turmeric)",
-                "Odour control technology",
+                "Controls Odour",
                 "No chemicals",
                 "No harsh fragrances",
               ].map((item, i) => (
@@ -59,7 +59,7 @@ export default function ProductShowcase() {
                   { name: "L", desc: "Thick Cotton" },
                   { name: "XL", desc: "Thick Cotton" },
                   { name: "XXL", desc: "Thick Cotton" },
-                  { name: "Thin", desc: "Free Size" },
+                  // { name: "Thin", desc: "Free Size" },
                 ].map((size, i) => (
                   <button
                     key={size.name}
@@ -89,8 +89,8 @@ export default function ProductShowcase() {
                   icon: "🌿",
                   color: "from-primary/40 to-primary/20",
                 },
-                { label: "Layer 3: Breathable Shield", icon: "💨", color: "from-accent/30 to-accent/10" },
-                { label: "Layer 4: Leak-proof Base", icon: "💧", color: "from-primary/30 to-primary/10" },
+                { label: "Layer 3: Breathable Shield & 💧Leak-proof Base", icon: "💨", color: "from-accent/30 to-accent/10" },
+                // { label: "Layer 4: Leak-proof Base", icon: "💧", color: "from-primary/30 to-primary/10" },
               ].map((layer, i) => (
                 <div
                   key={i}

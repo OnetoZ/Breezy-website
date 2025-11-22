@@ -13,6 +13,11 @@ const features = [
     description: "Infused with Neem, Aloe, Tulsi & Turmeric for natural protection.",
   },
   {
+    icon: "🌸",
+    title: "Odour-Free Freshness",
+    description: "Locks in moisture and controls odour, keeping you feeling fresh and confident.",
+  },
+  {
     icon: "☁️",
     title: "Soft & Breathable",
     description: "Feels like fabric, not plastic. Breathable design for all-day comfort.",
@@ -28,7 +33,7 @@ export default function WhyBreezy() {
   const { ref, isInView } = useInView()
 
   return (
-    <section id="why-breezy" ref={ref} className="py-20 md:py-32 bg-background relative overflow-hidden">
+    <section id="why-breezy" ref={ref} className="py-10 md:py-16 bg-background relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute left-0 top-1/4 w-96 h-96 bg-secondary/30 rounded-full blur-3xl"></div>
 
@@ -44,8 +49,8 @@ export default function WhyBreezy() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        {features.map((feature, i) => (
             <div
               key={i}
               className={`group p-8 bg-card rounded-2xl border border-border hover:border-primary/50 hover:shadow-xl transition-all duration-500 ${

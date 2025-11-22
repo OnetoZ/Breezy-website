@@ -2,6 +2,14 @@
 
 import { useState } from "react"
 import { useInView } from "@/hooks/use-in-view"
+import Image from "next/image"
+
+const marketplaces = [
+  { name: "Amazon", url: "https://www.amazon.in", logo: "/marketplaces/amazon.jpg" },
+  { name: "Flipkart", url: "https://www.flipkart.com", logo: "/marketplaces/flipkart.png" },
+  { name: "Nykaa", url: "https://www.nykaa.com", logo: "/marketplaces/nykaa.webp" },
+  { name: "BigBasket", url: "https://www.bigbasket.com", logo: "/marketplaces/bigbasket.png" },
+]
 
 export default function CTA() {
   const { ref, isInView } = useInView()
@@ -13,24 +21,41 @@ export default function CTA() {
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+  const [submitMessage, setSubmitMessage] = useState("")
 
   const handleRetailerSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setSubmitStatus("idle")
+    setSubmitMessage("")
 
     if (!retailerName.trim() || !phone.trim()) {
       setSubmitStatus("error")
+      setSubmitMessage("Please fill in your name and WhatsApp number, and try again.")
       return
     }
 
     setIsSubmitting(true)
     try {
-      // Simulate a successful submission on the client only, without any backend call.
-      // This keeps the UI behavior (loading state + success message) but does not
-      // send data to a server.
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      const response = await fetch("/api/retailers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          retailerName: retailerName.trim(),
+          storeName: storeName.trim(),
+          city: city.trim(),
+          phone: phone.trim(),
+          message: message.trim(),
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to submit retailer enquiry")
+      }
 
       setSubmitStatus("success")
+      setSubmitMessage("Thank you! We have received your retailer enquiry.")
       setRetailerName("")
       setStoreName("")
       setCity("")
@@ -39,14 +64,15 @@ export default function CTA() {
     } catch (error) {
       console.error("Retailer enquiry failed", error)
       setSubmitStatus("error")
+      setSubmitMessage("Something went wrong. Please retry or WhatsApp us directly.")
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <section ref={ref} className="py-20 md:py-32 relative overflow-hidden">
-      {/* Gradient background */}
+<section ref={ref} className="py-12 md:py-16 relative overflow-hidden">
+{/* Gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-background"></div>
 
       {/* Decorative elements */}
@@ -111,22 +137,21 @@ export default function CTA() {
               <div className="w-full max-w-xs rounded-2xl bg-background/90 border border-border/70 shadow-lg p-5 flex flex-col items-center text-center gap-4">
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-foreground">Scan to connect</p>
-                  <p className="text-xs text-muted-foreground">Breezy Business WhatsApp (demo QR)</p>
+                  <p className="text-xs text-muted-foreground">Breezy Business WhatsApp</p>
                 </div>
 
-                {/* Dummy WhatsApp Business QR image */}
+                {/* WhatsApp Business QR image */}
                 <div className="w-40 h-40 rounded-xl overflow-hidden bg-muted flex items-center justify-center">
                   <img
-                    src="https://dummyimage.com/320x320/000000/ffffff.png&text=WhatsApp+QR"
-                    alt="Dummy Breezy Business WhatsApp QR"
+                    src="QR code.png"
+                    alt="Breezy Business WhatsApp QR"
                     className="w-full h-full object-cover"
                   />
                 </div>
 
                 <div className="space-y-2 w-full text-left">
                   <p className="text-xs text-muted-foreground">
-                    This is a dummy QR-code placeholder. Replace it with your actual WhatsApp business QR when ready. Or
-                    share your details below and we will get back to you.
+                    Share your details below and we will get back to you.
                   </p>
                   <form onSubmit={handleRetailerSubmit} className="space-y-2 text-left w-full">
                     <input
@@ -171,13 +196,11 @@ export default function CTA() {
                     >
                       {isSubmitting ? "Sending..." : "Send retailer enquiry"}
                     </button>
-                    {submitStatus === "success" && (
-                      <p className="text-[0.7rem] text-emerald-600 mt-1">Thank you! We have received your details.</p>
+                    {submitStatus === "success" && submitMessage && (
+                      <p className="text-[0.7rem] text-emerald-600 mt-1">{submitMessage}</p>
                     )}
-                    {submitStatus === "error" && (
-                      <p className="text-[0.7rem] text-red-600 mt-1">
-                        Please fill in your name and WhatsApp number, and try again.
-                      </p>
+                    {submitStatus === "error" && submitMessage && (
+                      <p className="text-[0.7rem] text-red-600 mt-1">{submitMessage}</p>
                     )}
                   </form>
                 </div>
@@ -190,74 +213,61 @@ export default function CTA() {
             <p className="text-xs md:text-sm font-medium text-muted-foreground mb-3 text-center uppercase tracking-[0.2em]">
               Available on
             </p>
-            <div className="relative overflow-hidden">
-              <div
-                className="flex gap-10 whitespace-nowrap"
-                style={{ animation: "logo-marquee 28s linear infinite" }}
-              >
-                {[1, 2].map((loop) => (
-                  <div key={loop} className="flex gap-10 items-center">
-                    <a
-                      href="https://www.amazon.in"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors"
-                    >
-                      <span className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center text-[0.65rem] font-bold">
-                        A
-                      </span>
-                      <span className="text-xs md:text-sm font-semibold text-foreground">Amazon</span>
-                    </a>
-                    <a
-                      href="https://www.flipkart.com"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors"
-                    >
-                      <span className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center text-[0.65rem] font-bold">
-                        F
-                      </span>
-                      <span className="text-xs md:text-sm font-semibold text-foreground">Flipkart</span>
-                    </a>
-                    <a
-                      href="https://www.nykaa.com"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors"
-                    >
-                      <span className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center text-[0.65rem] font-bold">
-                        N
-                      </span>
-                      <span className="text-xs md:text-sm font-semibold text-foreground">Nykaa</span>
-                    </a>
-                    <a
-                      href="https://www.bigbasket.com"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors"
-                    >
-                      <span className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center text-[0.65rem] font-bold">
-                        B
-                      </span>
-                      <span className="text-xs md:text-sm font-semibold text-foreground">BigBasket</span>
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+            <div className="relative overflow-hidden logo-marquee-wrapper">
+  <div className="logo-marquee flex gap-10 whitespace-nowrap">
+    {[1, 2].map((loop) => (
+      <div key={loop} className="flex gap-10 items-center">
+        {marketplaces.map((marketplace) => (
+          <a
+            key={`${marketplace.name}-${loop}`}
+            href={marketplace.url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-3 h-10 md:h-12 px-4 rounded-full bg-background/80 border border-border hover:border-primary/80 transition-colors shrink-0"
+          >
+            <Image
+              src={marketplace.logo}
+              alt={`${marketplace.name} logo`}
+              width={96}
+              height={32}
+              className="h-6 md:h-8 w-auto object-contain"
+            />
+            <span className="text-xs md:text-sm font-semibold text-foreground">
+              {marketplace.name}
+            </span>
+          </a>
+        ))}
       </div>
-      <style jsx global>{`
-        @keyframes logo-marquee {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-      `}</style>
-    </section>
+    ))}
+  </div>
+</div>
+
+
+<style jsx global>{`
+@keyframes logo-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.logo-marquee {
+  width: max-content;
+  display: flex;
+  animation: logo-marquee 28s linear infinite;
+  will-change: transform;
+}
+
+.logo-marquee-wrapper:hover .logo-marquee {
+  animation-play-state: paused;
+}
+
+`}</style>
+</div>
+</div>
+</div>
+</section>
   )
 }

@@ -1,5 +1,7 @@
 "use client"
 
+import Image from "next/image"
+
 export default function Footer() {
   return (
     <footer className="bg-foreground text-background relative overflow-hidden">
@@ -10,8 +12,13 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center font-bold text-lg">B</div>
-            <h3 className="text-xl font-serif font-bold">Breezy</h3>
+            <Image
+              src="/breezy-logo.png"
+              alt="Breezy"
+              width={500}
+              height={200}
+              className="h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
             <p className="text-background/80 text-sm leading-relaxed">
               Herbal comfort, natural confidence. Empowering women through menstrual health and dignity.
             </p>

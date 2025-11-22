@@ -1,76 +1,26 @@
-"use client"
+ "use client"
 
 import { useEffect, useState } from "react"
 import { useInView } from "@/hooks/use-in-view"
 
 type Story = {
+  _id?: string            // comes from MongoDB
+  id: string              // used in UI
   name: string
   role: string
   text: string
   avatar: string
   rating: number
-  id: string
   media?: {
     type: "image" | "video"
     url: string
   }[]
 }
 
-const initialStories: Story[] = [
-  {
-    name: "Priya M.",
-    role: "College Student",
-    text: "Finally found something that doesn't irritate my sensitive skin. Breezy has been a game-changer for my confidence during my cycle.",
-    avatar: "👧",
-    rating: 5,
-    id: "story-1",
-  },
-  {
-    name: "Anjali K.",
-    role: "Working Professional",
-    text: "The 12-hour protection is reliable and the herbal ingredients give me peace of mind. I've recommended Breezy to all my friends.",
-    avatar: "👩‍💼",
-    rating: 5,
-    id: "story-2",
-  },
-  {
-    name: "Dr. Sneha P.",
-    role: "Gynecologist",
-    text: "I recommend Breezy to my patients. The herbal formulation is gentle on sensitive skin and the biodegradable packaging aligns with health ethics.",
-    avatar: "👨‍⚕️",
-    rating: 5,
-    id: "story-3",
-  },
-  {
-    name: "Neha S.",
-    role: "Young Professional",
-    text: "I don't have to worry about changing too often during long meetings. Breezy keeps me comfortable and confident all day.",
-    avatar: "👩",
-    rating: 5,
-    id: "story-4",
-  },
-  {
-    name: "Aditi R.",
-    role: "Hostel Student",
-    text: "The biodegradable pads make me feel better about my choices. It's nice to know I'm caring for myself and the planet.",
-    avatar: "🎓",
-    rating: 4,
-    id: "story-5",
-  },
-  {
-    name: "Meera T.",
-    role: "New Mom",
-    text: "After pregnancy, my skin became super sensitive. Breezy is one of the few products that actually feels gentle.",
-    avatar: "🤱",
-    rating: 5,
-    id: "story-6",
-  },
-]
-
 export default function Testimonials() {
   const { ref, isInView } = useInView()
 
-  const [stories, setStories] = useState<Story[]>(initialStories)
+  const [stories, setStories] = useState<Story[]>([])
   const [showAll, setShowAll] = useState(false)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -85,20 +35,23 @@ export default function Testimonials() {
       url: string
     }[]
   >([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Load stories from backend on mount (fallback to initialStories on error/empty)
+  // Load stories from backend on mount
   useEffect(() => {
     const loadStories = async () => {
       try {
         const res = await fetch("/api/testimonials")
-        if (!res.ok) return
+        if (!res.ok) throw new Error("Failed to fetch")
 
         const data = await res.json()
-        if (Array.isArray(data.testimonials) && data.testimonials.length > 0) {
+        if (Array.isArray(data.testimonials)) {
           setStories(data.testimonials as Story[])
         }
       } catch (error) {
         console.error("Failed to load testimonials", error)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -120,7 +73,7 @@ export default function Testimonials() {
 
     try {
       if (editingId) {
-        // Update locally first for a snappy feel
+        // Update locally first
         setStories((prev) =>
           prev.map((story) =>
             story.id === editingId
@@ -133,7 +86,7 @@ export default function Testimonials() {
           )
         )
 
-        // Inform backend (ignore errors silently for now)
+        // Inform backend
         await fetch("/api/testimonials", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -206,7 +159,7 @@ export default function Testimonials() {
     }
   }
 
-  const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (!files) return
 
@@ -215,11 +168,31 @@ export default function Testimonials() {
       url: string
     }[] = []
 
-    Array.from(files).forEach((file) => {
-      const url = URL.createObjectURL(file)
+    // Convert files to base64 data URLs
+    for (const file of Array.from(files)) {
       const isVideo = file.type.startsWith("video")
-      newMedia.push({ type: isVideo ? "video" : "image", url })
-    })
+      
+      // For images, convert to base64
+      if (!isVideo) {
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result as string)
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+        newMedia.push({ type: "image", url: base64 })
+      } else {
+        // For videos, we can still use blob URL for preview, but convert to base64 for storage
+        // For now, convert videos to base64 as well for consistency
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result as string)
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+        newMedia.push({ type: "video", url: base64 })
+      }
+    }
 
     setMediaPreviews(newMedia)
   }
@@ -230,6 +203,8 @@ export default function Testimonials() {
     ))
   }
 
+  const visibleStories = showAll ? stories : stories.slice(0, 3)
+
   return (
     <section ref={ref} className="py-20 md:py-32 bg-background relative overflow-hidden">
       {/* Decorative */}
@@ -238,7 +213,9 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className={`text-center max-w-3xl mx-auto mb-10 md:mb-16 ${isInView ? "fade-in-up" : "opacity-0"}`}>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">Stories from Our Community</h2>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">
+            Stories from Our Community
+          </h2>
           <p className="text-lg text-muted-foreground">
             Read how Breezy fits into real cycles and real lives — and share your own experience with the community.
           </p>
@@ -250,6 +227,7 @@ export default function Testimonials() {
             type="button"
             onClick={() => setShowAll((prev) => !prev)}
             className="inline-flex items-center justify-center rounded-full border border-border px-6 py-2 text-sm font-medium text-foreground hover:border-primary/60 hover:text-primary transition-colors"
+            disabled={stories.length === 0}
           >
             {showAll ? "View fewer stories" : "View more stories"}
           </button>
@@ -262,82 +240,96 @@ export default function Testimonials() {
           </button>
         </div>
 
+        {/* Loading state */}
+        {isLoading && (
+          <p className="text-center text-muted-foreground">Loading stories...</p>
+        )}
+
+        {/* Empty state */}
+        {!isLoading && stories.length === 0 && (
+          <p className="text-center text-muted-foreground">
+            No stories yet. Be the first to share your Breezy experience!
+          </p>
+        )}
+
         {/* Stories grid */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {(showAll ? stories : stories.slice(0, 3)).map((story, i) => (
-            <div
-              key={story.id}
-              className={`group p-8 bg-card rounded-2xl border border-border hover:border-primary/50 hover:shadow-xl transition-all duration-500 space-y-4 ${
-                isInView ? "fade-in-up" : "opacity-0"
-              }`}
-              style={{ animation: isInView ? `fadeInUp 0.6s ease-out ${i * 0.15}s both` : "" }}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="text-2xl flex gap-1">{renderStars(story.rating)}</div>
-                <div className="relative">
-                  <button
-                    type="button"
-                    className="text-lg text-muted-foreground hover:text-foreground px-2"
-                    onClick={() =>
-                      setMenuOpenForId((current) => (current === story.id ? null : story.id))
-                    }
-                  >
-                    ⋯
-                  </button>
-                  {menuOpenForId === story.id && (
-                    <div className="absolute right-0 mt-1 w-32 rounded-lg border border-border bg-card shadow-lg text-left text-sm overflow-hidden z-10">
-                      <button
-                        type="button"
-                        className="w-full px-3 py-2 hover:bg-muted text-left"
-                        onClick={() => handleEditStory(story)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="w-full px-3 py-2 hover:bg-muted text-left text-red-500"
-                        onClick={() => handleDeleteStory(story.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
+        {!isLoading && stories.length > 0 && (
+          <div className="grid md:grid-cols-3 gap-8">
+            {visibleStories.map((story, i) => (
+              <div
+                key={story.id}
+                className={`group p-8 bg-card rounded-2xl border border-border hover:border-primary/50 hover:shadow-xl transition-all duration-500 space-y-4 ${
+                  isInView ? "fade-in-up" : "opacity-0"
+                }`}
+                style={{ animation: isInView ? `fadeInUp 0.6s ease-out ${i * 0.15}s both` : "" }}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="text-2xl flex gap-1">{renderStars(story.rating)}</div>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="text-lg text-muted-foreground hover:text-foreground px-2"
+                      onClick={() =>
+                        setMenuOpenForId((current) => (current === story.id ? null : story.id))
+                      }
+                    >
+                      ⋯
+                    </button>
+                    {menuOpenForId === story.id && (
+                      <div className="absolute right-0 mt-1 w-32 rounded-lg border border-border bg-card shadow-lg text-left text-sm overflow-hidden z-10">
+                        <button
+                          type="button"
+                          className="w-full px-3 py-2 hover:bg-muted text-left"
+                          onClick={() => handleEditStory(story)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="w-full px-3 py-2 hover:bg-muted text-left text-red-500"
+                          onClick={() => handleDeleteStory(story.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Media (optional) */}
+                {story.media && story.media.length > 0 && (
+                  <div className="space-y-2">
+                    {story.media.slice(0, 2).map((item, index) => (
+                      <div key={index} className="rounded-xl overflow-hidden border border-border/60 bg-background">
+                        {item.type === "image" ? (
+                          <img src={item.url} alt="Story media" className="w-full h-40 object-cover" />
+                        ) : (
+                          <video
+                            src={item.url}
+                            className="w-full h-40 object-cover"
+                            controls
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Quote */}
+                <p className="text-foreground leading-relaxed">"{story.text}"</p>
+
+                {/* Author */}
+                <div className="pt-4 border-t border-border flex items-center gap-3">
+                  <span className="text-3xl">{story.avatar}</span>
+                  <div>
+                    <p className="font-serif font-bold text-foreground">{story.name}</p>
+                    <p className="text-sm text-muted-foreground">{story.role}</p>
+                  </div>
                 </div>
               </div>
-
-              {/* Media (optional) */}
-              {story.media && story.media.length > 0 && (
-                <div className="space-y-2">
-                  {story.media.slice(0, 2).map((item, index) => (
-                    <div key={index} className="rounded-xl overflow-hidden border border-border/60 bg-background">
-                      {item.type === "image" ? (
-                        <img src={item.url} alt="Story media" className="w-full h-40 object-cover" />
-                      ) : (
-                        <video
-                          src={item.url}
-                          className="w-full h-40 object-cover"
-                          controls
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Quote */}
-              <p className="text-foreground leading-relaxed">"{story.text}"</p>
-
-              {/* Author */}
-              <div className="pt-4 border-t border-border flex items-center gap-3">
-                <span className="text-3xl">{story.avatar}</span>
-                <div>
-                  <p className="font-serif font-bold text-foreground">{story.name}</p>
-                  <p className="text-sm text-muted-foreground">{story.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Add story popup */}
@@ -349,7 +341,9 @@ export default function Testimonials() {
                 <h3 className="text-xl font-serif font-bold text-foreground">
                   {editingId ? "Edit your Breezy story" : "Share your Breezy story"}
                 </h3>
-                <p className="text-sm text-muted-foreground mt-1">Your feedback helps others choose what feels right for their body.</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Your feedback helps others choose what feels right for their body.
+                </p>
               </div>
               <button
                 type="button"
@@ -456,7 +450,7 @@ export default function Testimonials() {
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-full bg-green-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 transition-colors"
+                  className="inline-flex items-center justify-center rounded-full bg-green-700 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 transition-colors"
                 >
                   Submit story
                 </button>

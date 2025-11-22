@@ -59,7 +59,7 @@ export default function Hero() {
                   }
                 }}
               >
-                Start With Breezy
+                Shop now
               </button>
             </div>
           </div>
