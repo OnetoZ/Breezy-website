@@ -1,6 +1,6 @@
 import { MongoClient, Db } from "mongodb"
 
-const uri = process.env.MONGODB_URI
+const uri = process.env.MONGODB_URI as string
 const dbName = process.env.MONGODB_DB || "breezy"
 
 if (!uri) {
