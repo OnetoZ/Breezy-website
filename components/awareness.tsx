@@ -16,17 +16,17 @@ const topics = [
     title: "Avoiding Rashes & Infections",
     icon: "🛡️",
     description:
-      "Keep the area clean and dry, and change pads on time.",
+      "Keep the area clean and dry, and change napkins on time.",
     more:
-      "Change pads every few hours, wash with plain water (no harsh soaps), and avoid heavily perfumed products on intimate skin.",
+      "Change napkins every few hours, wash with plain water (no harsh soaps), and avoid heavily perfumed products on intimate skin.",
   },
   {
-    title: "Responsible Pad Disposal",
+    title: "Responsible napkin Disposal",
     icon: "🌍",
     description:
-      "Wrap used pads and put them in a bin — never in the toilet.",
+      "Wrap used napkins and put them in a bin — never in the toilet.",
     more:
-      "Wrap pads in paper or the wrapper before throwing them in a covered bin. Flushing pads blocks pipes and hurts local water systems.",
+      "Wrap napkins in paper or the wrapper before throwing them in a covered bin. Flushing napkins blocks pipes and hurts local water systems.",
   },
   {
     title: "Nutrition for Healthy Cycles",
@@ -144,7 +144,7 @@ export default function Awareness() {
                 sign that your hormones and reproductive system are working together in a healthy way.
               </p>
               <ul className="list-disc list-inside space-y-1">
-                <li>Change pads every 4-6 hours to stay fresh and reduce rashes or infections.</li>
+                <li>Change napkins every 4-6 hours to stay fresh and reduce rashes or infections.</li>
                 <li>Drink water and eat iron-rich foods (like greens, dates, nuts) to fight tiredness.</li>
                 <li>Light stretching or yoga can ease cramps and improve mood.</li>
                 <li>If pain is very strong or cycles are very irregular, talk to a doctor early.</li>

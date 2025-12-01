@@ -95,7 +95,7 @@ export default function CTA() {
                 Sell Breezy in your store.
               </h2>
               <p className="text-sm md:text-lg text-muted-foreground mb-6 md:mb-8 max-w-xl leading-relaxed">
-                Breezy is a herbal, skin-friendly and biodegradable sanitary pad brand. Add Breezy to your shelves and
+                Breezy is a herbal, skin-friendly and biodegradable sanitary napkin brand. Add Breezy to your shelves and
                 offer your customers a safe and comfortable choice.
               </p>
 

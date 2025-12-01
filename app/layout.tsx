@@ -18,7 +18,7 @@ export const metadata = {
     "Experience the comfort of herbal sanitary napkins with natural protection and dignity. Breezy brings together nature and wellness for every woman.",
   generator: "v0.app",
   icons: {
-    icon: "/icon.svg",
+    icon: "/breezy nav icon.png",
   },
 }
 

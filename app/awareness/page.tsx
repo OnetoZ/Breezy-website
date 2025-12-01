@@ -15,16 +15,16 @@ const awarenessSections = [
   {
     title: "Avoiding Rashes & Infections",
     icon: "🛡️",
-    content: "Keeping the area clean, dry and changing pads on time reduces most rashes.",
+    content: "Keeping the area clean, dry and changing napkins on time reduces most rashes.",
     details:
-      "Change pads every 46 hours, or sooner if they feel damp. Wash with plain water instead of harsh soaps, and avoid heavily perfumed products on intimate skin. Loose, breathable underwear also helps the skin stay healthy.",
+      "Change napkins every 46 hours, or sooner if they feel damp. Wash with plain water instead of harsh soaps, and avoid heavily perfumed products on intimate skin. Loose, breathable underwear also helps the skin stay healthy.",
   },
   {
-    title: "Responsible Pad Disposal",
+    title: "Responsible napkin Disposal",
     icon: "🌍",
-    content: "Wrap used pads and put them in a bin — never in the toilet.",
+    content: "Wrap used napkins and put them in a bin — never in the toilet.",
     details:
-      "After use, fold the pad, wrap it in paper or the wrapper, and place it in a covered bin. Flushing pads blocks pipes and harms local water systems. If your area has waste segregation, follow the local guidelines for sanitary waste.",
+      "After use, fold the napkin, wrap it in paper or the wrapper, and place it in a covered bin. Flushing napkins blocks pipes and harms local water systems. If your area has waste segregation, follow the local guidelines for sanitary waste.",
   },
   {
     title: "Nutrition for Healthy Cycles",

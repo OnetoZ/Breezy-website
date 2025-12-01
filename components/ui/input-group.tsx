@@ -35,7 +35,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
-const inputGroupAddonVariants = cva(
+const inputGrounapkindonVariants = cva(
   "text-muted-foreground flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
   {
     variants: {
@@ -56,17 +56,17 @@ const inputGroupAddonVariants = cva(
   },
 )
 
-function InputGroupAddon({
+function InputGrounapkindon({
   className,
   align = 'inline-start',
   ...props
-}: React.ComponentProps<'div'> & VariantProps<typeof inputGroupAddonVariants>) {
+}: React.ComponentProps<'div'> & VariantProps<typeof inputGrounapkindonVariants>) {
   return (
     <div
       role="group"
       data-slot="input-group-addon"
       data-align={align}
-      className={cn(inputGroupAddonVariants({ align }), className)}
+      className={cn(inputGrounapkindonVariants({ align }), className)}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) {
           return
@@ -161,7 +161,7 @@ function InputGroupTextarea({
 
 export {
   InputGroup,
-  InputGroupAddon,
+  InputGrounapkindon,
   InputGroupButton,
   InputGroupText,
   InputGroupInput,

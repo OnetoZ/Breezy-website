@@ -27,13 +27,13 @@ export default function CartPage() {
               <div className="rounded-2xl border border-border bg-card p-4 flex gap-4 items-center">
                 <div className="w-24 h-24 rounded-xl bg-muted overflow-hidden flex items-center justify-center">
                   <img
-                    src="/images/breezy-pad-box.jpg"
-                    alt="Breezy herbal pads box"
+                    src="/images/breezy-napkin-box.jpg"
+                    alt="Breezy herbal napkins box"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex-1 space-y-1">
-                  <p className="text-sm font-semibold text-foreground">Breezy Herbal Pads - Comfort Flow Pack</p>
+                  <p className="text-sm font-semibold text-foreground">Breezy Herbal napkins - Comfort Flow Pack</p>
                   <p className="text-xs text-muted-foreground">Selected on shop page (size & quantity for demo only).</p>
                   <p className="text-sm font-medium text-foreground">₹199</p>
                 </div>

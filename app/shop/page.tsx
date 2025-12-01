@@ -6,9 +6,9 @@ import Navigation from "@/components/navigation"
 import Footer from "@/components/footer"
 
 const sizes = [
-  { label: "L", desc: "Thick cotton" },
-  { label: "XL", desc: "Thick cotton" },
-  { label: "XXL", desc: "Thick cotton" },
+  { label: "L", desc: "" },
+  { label: "XL", desc: "" },
+  { label: "XXL", desc: "" },
   { label: "Thin", desc: "Free size" },
 ]
 
@@ -40,7 +40,7 @@ export default function ShopPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          product: "Breezy Herbal Pads - Comfort Flow Pack",
+          product: "Breezy Herbal napkins - Comfort Flow Pack",
           size: selectedSize,
           price: 199,
           currency: "INR",
@@ -87,10 +87,10 @@ export default function ShopPage() {
             {/* Product image */}
             <div className="flex items-center justify-center">
               <div className="w-full max-w-md rounded-3xl border border-border bg-muted/60 flex items-center justify-center shadow-lg overflow-hidden">
-                {/* Save the uploaded image as /public/images/breezy-pad-box.jpg or update the src below */}
+                {/* Save the uploaded image as /public/images/breezy-napkin-box.jpg or update the src below */}
                 <img
-                  src="/images/breezy-pad-box.jpg"
-                  alt="Breezy herbal pads box"
+                  src="/images/breezy-napkin-box.jpg"
+                  alt="Breezy herbal napkins box"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -99,10 +99,10 @@ export default function ShopPage() {
             {/* Product details & actions */}
             <div className="space-y-6">
               <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80">Breezy Herbal Pads</p>
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80">Breezy Herbal napkins</p>
                 <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground">Comfort Flow Pack</h1>
                 <p className="text-sm md:text-base text-muted-foreground">
-                  Ultra-soft herbal sanitary pads with Neem, Aloe, Tulsi and Turmeric for gentle, everyday comfort.
+                  Ultra-soft herbal sanitary napkins with Neem, Aloe, Tulsi and Turmeric for gentle, everyday comfort.
                 </p>
               </div>
 
@@ -111,7 +111,7 @@ export default function ShopPage() {
                   ₹199
                   <span className="ml-2 text-xs font-normal text-muted-foreground">incl. all taxes</span>
                 </p>
-                <p className="text-xs text-muted-foreground">Pack of 10 pads • Rash-free • Leak protection up to 8 hours</p>
+                <p className="text-xs text-muted-foreground">Pack of 10 napkins • Rash-free • Leak protection up to 8 hours</p>
               </div>
 
               <div className="space-y-3">

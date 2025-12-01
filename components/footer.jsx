@@ -30,7 +30,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-background/80">
               <li>
                 <a href="#" className="hover:text-background transition-colors">
-                  Shop Pads
+                  Shop napkins
                 </a>
               </li>
               <li>

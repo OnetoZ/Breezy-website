@@ -35,7 +35,9 @@ export default function Testimonials() {
       url: string
     }[]
   >([])
+  const [mediaFiles, setMediaFiles] = useState<File[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isUploading, setIsUploading] = useState(false)
 
   // Load stories from backend on mount
   useEffect(() => {
@@ -46,7 +48,14 @@ export default function Testimonials() {
 
         const data = await res.json()
         if (Array.isArray(data.testimonials)) {
-          setStories(data.testimonials as Story[])
+          // Filter out blob URLs (they're invalid after refresh)
+          const cleanedStories = data.testimonials.map((story: Story) => ({
+            ...story,
+            media: story.media?.filter(
+              (m) => m.url.startsWith("/uploads/") || m.url.startsWith("data:") || m.url.startsWith("http")
+            ) || [],
+          }))
+          setStories(cleanedStories as Story[])
         }
       } catch (error) {
         console.error("Failed to load testimonials", error)
@@ -58,20 +67,71 @@ export default function Testimonials() {
     loadStories()
   }, [])
 
+  // Cleanup blob URLs when component unmounts or media changes
+  useEffect(() => {
+    return () => {
+      mediaPreviews.forEach((media) => {
+        if (media.url.startsWith("blob:")) {
+          URL.revokeObjectURL(media.url)
+        }
+      })
+    }
+  }, [mediaPreviews])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!text.trim()) return
 
-    const payload = {
-      name: name.trim() || "Anonymous",
-      role: role.trim() || "Community Member",
-      text: text.trim(),
-      avatar: "😊",
-      rating,
-      media: mediaPreviews,
-    }
+    setIsUploading(true)
 
     try {
+      // Upload files first and get their URLs
+      const uploadedMedia: { type: "image" | "video"; url: string }[] = []
+      
+      for (let i = 0; i < mediaFiles.length; i++) {
+        const file = mediaFiles[i]
+        const formData = new FormData()
+        formData.append("file", file)
+
+        try {
+          const uploadRes = await fetch("/api/testimonials/upload", {
+            method: "POST",
+            body: formData,
+          })
+
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json()
+            const isVideo = file.type.startsWith("video")
+            uploadedMedia.push({
+              type: isVideo ? "video" : "image",
+              url: uploadData.url,
+            })
+          } else {
+            console.error("Failed to upload file:", file.name)
+          }
+        } catch (error) {
+          console.error("Error uploading file:", error)
+        }
+      }
+
+      // If editing, preserve existing media URLs if no new files were uploaded
+      let finalMedia = uploadedMedia
+      if (editingId && uploadedMedia.length === 0 && mediaPreviews.length > 0) {
+        // When editing without new uploads, keep existing media (filter out blob URLs)
+        finalMedia = mediaPreviews.filter(
+          (m) => m.url.startsWith("/uploads/") || m.url.startsWith("data:") || m.url.startsWith("http")
+        )
+      }
+
+      const payload = {
+        name: name.trim() || "Anonymous",
+        role: role.trim() || "Community Member",
+        text: text.trim(),
+        avatar: "😊",
+        rating,
+        media: finalMedia,
+      }
+
       if (editingId) {
         // Update locally first
         setStories((prev) =>
@@ -114,6 +174,8 @@ export default function Testimonials() {
       }
     } catch (error) {
       console.error("Saving testimonial failed", error)
+    } finally {
+      setIsUploading(false)
     }
 
     setIsFormOpen(false)
@@ -123,6 +185,7 @@ export default function Testimonials() {
     setText("")
     setRating(5)
     setMediaPreviews([])
+    setMediaFiles([])
   }
 
   const handleAddStoryClick = () => {
@@ -132,6 +195,7 @@ export default function Testimonials() {
     setText("")
     setRating(5)
     setMediaPreviews([])
+    setMediaFiles([])
     setIsFormOpen(true)
   }
 
@@ -159,40 +223,24 @@ export default function Testimonials() {
     }
   }
 
-  const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
     if (!files) return
 
+    const newFiles = Array.from(files)
+    setMediaFiles(newFiles)
+
+    // Create preview URLs (blob URLs for preview only)
     const newMedia: {
       type: "image" | "video"
       url: string
     }[] = []
 
-    // Convert files to base64 data URLs
-    for (const file of Array.from(files)) {
+    newFiles.forEach((file) => {
+      const url = URL.createObjectURL(file)
       const isVideo = file.type.startsWith("video")
-      
-      // For images, convert to base64
-      if (!isVideo) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = () => resolve(reader.result as string)
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-        newMedia.push({ type: "image", url: base64 })
-      } else {
-        // For videos, we can still use blob URL for preview, but convert to base64 for storage
-        // For now, convert videos to base64 as well for consistency
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = () => resolve(reader.result as string)
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-        newMedia.push({ type: "video", url: base64 })
-      }
-    }
+      newMedia.push({ type: isVideo ? "video" : "image", url })
+    })
 
     setMediaPreviews(newMedia)
   }
@@ -450,9 +498,10 @@ export default function Testimonials() {
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-full bg-green-700 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 transition-colors"
+                  disabled={isUploading}
+                  className="inline-flex items-center justify-center rounded-full bg-green-700 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Submit story
+                  {isUploading ? "Uploading..." : "Submit story"}
                 </button>
               </div>
             </form>

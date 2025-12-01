@@ -92,7 +92,7 @@ export default function ImpactStory() {
           {[
             { number: "50K+", label: "Girls Reached", icon: "👧" },
             { number: "100+", label: "Schools Partnered", icon: "🎓" },
-            { number: "500K+", label: "Pads Distributed", icon: "💝" },
+            { number: "500K+", label: "napkins Distributed", icon: "💝" },
           ].map((stat, i) => (
             <div
               key={i}

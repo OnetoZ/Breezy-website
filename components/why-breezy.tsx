@@ -5,12 +5,12 @@ const features = [
   {
     icon: "✨",
     title: "Rash-Free Comfort",
-    description: "Gentle herbal-cotton top sheet for sensitive skin, tested for comfort.",
+    description: "Gentle soft top sheet for sensitive skin, enhanced comfort.",
   },
   {
     icon: "🌿",
     title: "Herbal Protection",
-    description: "Infused with Neem, Aloe, Tulsi & Turmeric for natural protection.",
+    description: "Enriched with Neem, Aloe, Tulsi & Turmeric for natural protection.",
   },
   {
     icon: "🌸",
@@ -25,7 +25,7 @@ const features = [
   {
     icon: "🛡️",
     title: "No Chemicals",
-    description: "No chlorine. No harsh fragrance. Pure herbal goodness.",
+    description: "No harsh fragrance. Pure herbal goodness.",
   },
 ]
 

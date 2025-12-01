@@ -24,7 +24,7 @@ export default function ProductShowcase() {
                 Designed for Every Girl & Woman
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Breezy Herbal Pads combine natural ingredients with advanced comfort technology. No compromise on
+                Breezy Herbal napkins combine natural ingredients with advanced comfort. No compromise on
                 quality, only natural goodness.
               </p>
             </div>
@@ -32,11 +32,13 @@ export default function ProductShowcase() {
             {/* Features List */}
             <div className="space-y-4">
               {[
-                "Ultra-soft cotton",
-                "Herbal protection (Neem, Aloe, Tulsi, Turmeric)",
-                "Controls Odour",
-                "No chemicals",
-                "No harsh fragrances",
+                  "Natural odour control",
+                  "Gentle on sensitive skin",
+                  "Soft cottony feel",
+                  "Anti-bacterial herbal protection",
+                  "Leak-lock absorption",
+                  "Breathable & rash-free comfort",
+
               ].map((item, i) => (
                 <div
                   key={i}
@@ -56,9 +58,9 @@ export default function ProductShowcase() {
               <p className="font-semibold text-foreground">Available Sizes:</p>
               <div className="flex gap-3 flex-wrap">
                 {[
-                  { name: "L", desc: "Thick Cotton" },
-                  { name: "XL", desc: "Thick Cotton" },
-                  { name: "XXL", desc: "Thick Cotton" },
+                  { name: "L", desc: "" },
+                  { name: "XL", desc: "" },
+                  { name: "XXL", desc: "" },
                   // { name: "Thin", desc: "Free Size" },
                 ].map((size, i) => (
                   <button
