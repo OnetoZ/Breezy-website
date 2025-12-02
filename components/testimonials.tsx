@@ -11,6 +11,7 @@ type Story = {
   text: string
   avatar: string
   rating: number
+  editToken?: string
   media?: {
     type: "image" | "video"
     url: string
@@ -102,9 +103,11 @@ export default function Testimonials() {
           if (uploadRes.ok) {
             const uploadData = await uploadRes.json()
             const isVideo = file.type.startsWith("video")
+            // Prefer a returned data URL so images are available regardless of deployment static file persistence
+            const mediaUrl = uploadData.dataUrl || uploadData.url
             uploadedMedia.push({
               type: isVideo ? "video" : "image",
-              url: uploadData.url,
+              url: mediaUrl,
             })
           } else {
             console.error("Failed to upload file:", file.name)
@@ -147,10 +150,12 @@ export default function Testimonials() {
         )
 
         // Inform backend
+        // include edit token from localStorage to authorize the update
+        const token = typeof window !== "undefined" ? localStorage.getItem(`testimonial-${editingId}-token`) : null
         await fetch("/api/testimonials", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingId, ...payload }),
+          body: JSON.stringify({ id: editingId, editToken: token, ...payload }),
         })
       } else {
         const res = await fetch("/api/testimonials", {
@@ -162,6 +167,15 @@ export default function Testimonials() {
         if (res.ok) {
           const data = await res.json()
           const created = data.testimonial as Story
+          // store edit token locally so this client can edit/delete this testimonial
+          if (created?.id && created?.editToken && typeof window !== "undefined") {
+            try {
+              localStorage.setItem(`testimonial-${created.id}-token`, created.editToken)
+            } catch (e) {
+              console.warn("Failed to save testimonial edit token locally", e)
+            }
+          }
+
           setStories((prev) => [created, ...prev])
         } else {
           // Fallback: still add locally if backend fails
@@ -211,13 +225,21 @@ export default function Testimonials() {
   }
 
   const handleDeleteStory = async (id: string) => {
-    setStories((prev) => prev.filter((story) => story.id !== id))
     setMenuOpenForId(null)
 
     try {
-      await fetch(`/api/testimonials?id=${encodeURIComponent(id)}`, {
+      const token = typeof window !== "undefined" ? localStorage.getItem(`testimonial-${id}-token`) : null
+      const res = await fetch(`/api/testimonials?id=${encodeURIComponent(id)}&token=${encodeURIComponent(token || "")}`, {
         method: "DELETE",
       })
+
+      if (res.ok) {
+        setStories((prev) => prev.filter((story) => story.id !== id))
+      } else {
+        const data = await res.json()
+        console.error("Failed to delete testimonial", data)
+        // optionally show a notification to the user here
+      }
     } catch (error) {
       console.error("Failed to delete testimonial", error)
     }
@@ -314,33 +336,38 @@ export default function Testimonials() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="text-2xl flex gap-1">{renderStars(story.rating)}</div>
                   <div className="relative">
-                    <button
-                      type="button"
-                      className="text-lg text-muted-foreground hover:text-foreground px-2"
-                      onClick={() =>
-                        setMenuOpenForId((current) => (current === story.id ? null : story.id))
-                      }
-                    >
-                      ⋯
-                    </button>
-                    {menuOpenForId === story.id && (
-                      <div className="absolute right-0 mt-1 w-32 rounded-lg border border-border bg-card shadow-lg text-left text-sm overflow-hidden z-10">
-                        <button
-                          type="button"
-                          className="w-full px-3 py-2 hover:bg-muted text-left"
-                          onClick={() => handleEditStory(story)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="w-full px-3 py-2 hover:bg-muted text-left text-red-500"
-                          onClick={() => handleDeleteStory(story.id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
+                    {typeof window !== "undefined" &&
+                      localStorage.getItem(`testimonial-${story.id}-token`) && (
+                        <>
+                          <button
+                            type="button"
+                            className="text-lg text-muted-foreground hover:text-foreground px-2"
+                            onClick={() =>
+                              setMenuOpenForId((current) => (current === story.id ? null : story.id))
+                            }
+                          >
+                            ⋯
+                          </button>
+                          {menuOpenForId === story.id && (
+                            <div className="absolute right-0 mt-1 w-32 rounded-lg border border-border bg-card shadow-lg text-left text-sm overflow-hidden z-10">
+                              <button
+                                type="button"
+                                className="w-full px-3 py-2 hover:bg-muted text-left"
+                                onClick={() => handleEditStory(story)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                className="w-full px-3 py-2 hover:bg-muted text-left text-red-500"
+                                onClick={() => handleDeleteStory(story.id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
                   </div>
                 </div>
 

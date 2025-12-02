@@ -34,7 +34,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-background transition-colors">
+                <a href="https://wa.me/message/FWH2E5VAQ4MSL1" className="hover:text-background transition-colors">
                   Bulk Orders
                 </a>
               </li>
@@ -73,7 +73,7 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Connect</h4>
             <ul className="space-y-2 text-sm text-background/80 mb-6">
               <li>
-                <a href="#" className="hover:text-background transition-colors">
+                <a href="https://www.instagram.com/saishanaa_products/" className="hover:text-background transition-colors">
                   Instagram
                 </a>
               </li>
